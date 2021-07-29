@@ -45,9 +45,18 @@ def register(request):
 
         # attach the access token to the response data
         # and set the response status code to 201
-        new_username = new_user.username
-        response.data = {'accessToken': access_token,
-                         'msg': [f'Welcome, {new_username}!']}
+
+        if new_user.username:
+            new_username = new_user.username
+        else:
+            new_user.username = new_user.email
+            new_username = new_user.email
+
+        response.data = {
+            'accessToken': access_token,
+            'msg': [f'Welcome, {new_username}!'],
+            'user': UserDetailSerializer(new_user)
+        }
         response.status_code = status.HTTP_201_CREATED
 
         # create refreshtoken cookie
@@ -66,7 +75,8 @@ def register(request):
     # if the serialized data is NOT valid
     # send a response with error messages and status code 400
     response.data = {
-        'msg': [msg for msg in new_user_serializer.errors.values()]}
+        'msg': new_user_serializer.errors
+    }
 
     response.status_code = status.HTTP_400_BAD_REQUEST
     # return failed response
@@ -129,7 +139,8 @@ def login(request):
     # return the access token in the reponse
     response.data = {
         'accessToken': access_token,
-        'msg': ['Login successful!']
+        'msg': ['Login successful!'],
+        'user': UserDetailSerializer(user)
     }
     response.status_code = status.HTTP_200_OK
     return response
