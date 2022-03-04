@@ -1,4 +1,3 @@
-# Journalia
+# DRF Backend Template
 
-### Journaling app inspired by the Bullet Journal Method
-
+## Combines Django's CSRF Token within a cookie and JWTs for authentication
